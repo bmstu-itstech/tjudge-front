@@ -1,0 +1,431 @@
+html, body {
+    height: 100%;
+}
+
+body {
+    font-family: Montserrat, sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+
+header, main, footer {
+    display: flex;
+    justify-content: center;
+}
+
+header {
+    width: 100%;
+    border-bottom: 1px solid #cdcdcd;
+    font-size: 18px;
+}
+
+header.subheader {
+    background-color: #F9F9FB;
+}
+
+.flex {
+    display: flex;
+}
+
+@keyframes fadeOutIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+.fade-effect {
+    animation: fadeOutIn 1s ease-in-out;
+}
+
+.light-grey {
+    background-color: #f9f9fa;
+}
+
+.wrapper {
+    width: 70vw;
+    display: flex;
+    justify-content: start;
+    flex-wrap: wrap;
+}
+
+.wrapper_reverse {
+    justify-content: flex-end;
+}
+
+.wrapper_center {
+    justify-content: center;
+}
+
+.icon {
+    height: 1em;
+}
+
+
+.header__item {
+    display: flex;
+    align-items: center;
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
+    white-space: nowrap;
+    padding: 0.5em;
+}
+
+.header__item_left {
+    margin-right: auto;
+}
+
+.header__title {
+    font-size: 32px;
+    font-weight: bold;
+    color: #333333;
+}
+
+.header__button {
+    font-size: 18px;
+    color: #333333;
+    height: 2.5em;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    border-radius: 0.5rem;
+
+    align-content: center;
+    transition-duration: .15s;
+}
+
+.header__button:hover {
+    background-color: white;
+    color: #1A1A1A;
+}
+
+.header__button_black {
+    color: white;
+    background-color: #1A1A1A;
+}
+
+.header__button_black:hover {
+    background-color: #696969;
+    color: white;
+}
+
+.header__icon {
+    width: 20px;
+    height: 20px;
+}
+
+@media (max-width: 800px) {
+    .header__button *:not(.header__icon) {
+        display: none;
+    }
+}
+
+.header__subtitle {
+    color: #1A1A1A;
+}
+
+.header__subtitle:hover {
+    color: #1A1A1A;
+    text-decoration: underline;
+}
+
+.header__subtitle:visited {
+    color: #1A1A1A;
+}
+
+.header__subtitle_highlight {
+    font-weight: bold;
+}
+
+
+main {
+    flex: 1;
+    width: 100%;
+}
+
+.card {
+    width: 600px;
+    margin: auto;
+    padding: 32px;
+    border-radius: 0.75em;
+    box-shadow: 0 2px 14px #3A394433;
+}
+
+.card__header {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 32px;
+}
+
+.card__form * {
+    margin-bottom: 1.25rem;
+}
+
+.card__label {
+    display: block;
+}
+
+.card__input {
+    width: 100%;
+    border: 1px solid black;
+    border-radius: 0.3em;
+    padding: 1rem;
+    font-size: 16px;
+    display: block;
+}
+
+.card__input:focus {
+    border-color: #0060DF;
+}
+
+.card__input::placeholder {
+    color: #9ca3af;
+}
+
+.card__submit {
+    width: 100%;
+    font-size: 20px;
+    color: white;
+    background-color: #0060DF;
+    border-radius: 0.5em;
+    padding: 1rem;
+    display: block;
+    transition-duration: .15s;
+}
+
+.card__submit:hover {
+    background-color: #0250BB;
+}
+
+
+.leaderboard {
+    background-color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    max-width: 800px;
+    width: 100%;
+}
+
+.leaderboard__title {
+    font-size: 24px;
+    margin: 0.3em;
+    font-weight: bold;
+}
+
+.leaderboard__header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.leaderboard__rules {
+    font-size: 20px;
+    color: #1A1A1A;
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+}
+
+.leaderboard__rules:hover {
+    text-decoration: underline;
+}
+
+.leaderboard__icon {
+    height: 1em;
+    margin-right: 5px;
+}
+
+.leaderboard__table {
+    font-size: 20px;
+    width: 100%;
+    border-collapse:collapse
+}
+
+.leaderboard thead {
+    color: #94999F;
+}
+
+.leaderboard tr {
+    border-bottom: 1px solid #cdcdcd;
+}
+
+.leaderboard tr:nth-child(even) {
+    background-color: #00000005;
+}
+
+.leaderboard td,
+.leaderboard th {
+    border: none;
+    padding: 0.4rem;
+}
+
+.leaderboard th:nth-child(2) {
+    text-align: left;
+}
+
+.leaderboard td:nth-child(1) {
+    text-align: right;
+    width: 75px;
+    color: #94999F;
+}
+
+.leaderboard td:nth-child(3) {
+    text-align: center;
+    width: 75px;
+}
+
+.leaderboard tr:nth-child(1) td:nth-child(1)::before {
+    content: "🥇";
+}
+
+.leaderboard tr:nth-child(2) td:nth-child(1)::before {
+    content: "🥈";
+}
+
+.leaderboard tr:nth-child(3) td:nth-child(1)::before {
+    content: "🥉";
+}
+
+.leaderboard tr:nth-child(1) td:nth-child(1)::before,
+.leaderboard tr:nth-child(2) td:nth-child(1)::before,
+.leaderboard tr:nth-child(3) td:nth-child(1)::before {
+    display: inline;
+}
+
+.leaderboard__error.icon {
+    font-size: 25px;
+}
+
+
+.upload__form {
+    margin: 24px 0;
+    display: flex;
+    align-items: center;
+}
+
+.upload__file-button {
+    background: #0060DF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem 2rem;
+    border-radius: 0.5rem;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.upload__file-button:hover {
+    background: #0250BB;
+}
+
+.upload__label {
+    display: flex;
+    align-items: center;
+}
+
+.upload__file-input {
+    display: none;
+}
+
+.upload__preview {
+    margin-left: 24px;
+}
+
+.upload__preview-link,
+.upload__preview-link:link,
+.upload__preview-link:visited {
+    font-size: 18px;
+    text-decoration: underline;
+    color: #0050EF;
+}
+
+.upload__preview-link:hover {
+    color: #0250BB;
+}
+
+
+
+.markdown {
+    width: 100%;
+    max-width: 800px;
+    padding: 1rem;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown h5 {
+    font-weight: bold;
+    padding: 0.8em 0;
+}
+
+.markdown h1 {
+    font-size: 32px;
+}
+
+.markdown h2 {
+    font-size: 28px;
+}
+
+.markdown h3 {
+    font-size: 24px;
+}
+
+.markdown h4 {
+    font-size: 20px;
+}
+
+.markdown h5 {
+    font-size: 20px;
+}
+
+.markdown ol {
+    padding-left: 2.5rem;
+}
+
+.markdown li {
+    margin-bottom: 0.5em;
+}
+
+.markdown .codehilite {
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+.markdown p,
+.markdown code {
+    font-size: 16px;
+}
+
+.markdown p code {
+    padding: .2em .4em;
+    font-size: 80%;
+    margin: 0;
+    background-color: #eff1f3;
+    color: #383a42;
+    border-radius: 6px;
+}
+
+
+
+footer {
+    width: 100%;
+    background-color: #3f3f3f;
+    color: white;
+}
+
+footer p {
+    padding: 0.5em;
+    font-size: 18px;
+    color: white;
+}
+
+footer a {
+    color: white;
+}
+
+footer a:visited {
+    color: white;
+}
