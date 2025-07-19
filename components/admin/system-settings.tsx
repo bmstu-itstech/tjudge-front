@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Save, RefreshCw, Database, Bell, Shield, Clock } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
+
 export function SystemSettings() {
   const [settings, setSettings] = useState({
     siteName: "Bauman Code Tournament",
@@ -54,6 +55,12 @@ export function SystemSettings() {
             <Save className="w-4 h-4 mr-2" />
             Сохранить
           </Button>
+        </div>
+      </div>
+      <div className="flex justify-start">
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-100 text-yellow-800 rounded-lg border border-yellow-300 text-base font-medium mb-2">
+          <span>Функционал с БД</span>
+          <span className="px-2 py-0.5 bg-yellow-200 rounded text-sm font-semibold">В разработке</span>
         </div>
       </div>
 

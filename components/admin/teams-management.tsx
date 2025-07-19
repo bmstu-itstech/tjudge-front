@@ -16,6 +16,14 @@ import {
 } from "@/components/ui/dialog"
 import { Plus, Users, LinkIcon, Copy, Search, Edit, X } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { AdminSearchInput } from "./AdminSearchInput"
+
+
+
+const mockContests = [
+  { id: "1", name: "Весенний контест 2024" },
+  { id: "2", name: "Осенний контест 2023" },
+]
 
 interface Team {
   id: string
@@ -27,6 +35,7 @@ interface Team {
     isLeader: boolean
   }>
   inviteLink: string
+  contestId: string
 }
 
 const generateTeamCode = () => {
@@ -52,6 +61,7 @@ export function TeamsManagement() {
         { id: "2", username: "maria_code", isLeader: false },
       ],
       inviteLink: "https://bct.bmstu.ru/join/CW2025",
+      contestId: "1"
     },
     {
       id: "2",
@@ -59,6 +69,7 @@ export function TeamsManagement() {
       code: "DM2025",
       members: [{ id: "3", username: "john_debug", isLeader: true }],
       inviteLink: "https://bct.bmstu.ru/join/DM2025",
+      contestId: "2"
     },
   ])
 
@@ -67,12 +78,14 @@ export function TeamsManagement() {
 
   const [newTeamName, setNewTeamName] = useState("")
   const [newTeamCode, setNewTeamCode] = useState(generateTeamCode())
+  const [newTeamContestId, setNewTeamContestId] = useState(mockContests[0].id)
 
   const [teamQuery, setTeamQuery] = useState("")
 
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [editTeam, setEditTeam] = useState<Team | null>(null)
   const [editMembers, setEditMembers] = useState<{ id: string; username: string; isLeader: boolean }[]>([])
+  const [editTeamContestId, setEditTeamContestId] = useState<string>("")
   const [newMemberName, setNewMemberName] = useState("")
 
   const handleCreateTeam = (e: React.FormEvent) => {
@@ -89,11 +102,13 @@ export function TeamsManagement() {
         code: newTeamCode,
         members: [],
         inviteLink: `https://bct.bmstu.ru/join/${newTeamCode}`,
+        contestId: newTeamContestId
       },
     ])
     setIsCreateDialogOpen(false)
     setNewTeamName("")
     setNewTeamCode(generateTeamCode())
+    setNewTeamContestId(mockContests[0].id)
     toast({ title: "Команда создана" })
   }
 
@@ -108,16 +123,18 @@ export function TeamsManagement() {
   const handleEditOpen = (team: Team) => {
     setEditTeam(team)
     setEditMembers(team.members)
+    setEditTeamContestId(team.contestId)
     setIsEditDialogOpen(true)
     setNewMemberName("")
   }
 
   const handleEditSave = () => {
     if (!editTeam) return
-    setTeams(teams.map(t => t.id === editTeam.id ? { ...t, members: editMembers } : t))
+    setTeams(teams.map(t => t.id === editTeam.id ? { ...t, members: editMembers, contestId: editTeamContestId } : t))
     setIsEditDialogOpen(false)
     setEditTeam(null)
     setEditMembers([])
+    setEditTeamContestId("")
   }
 
   const handleAddMember = () => {
@@ -148,18 +165,7 @@ export function TeamsManagement() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
         <h2 className="text-2xl font-bold text-slate-800 flex-shrink-0">Управление командами</h2>
-        <div className="relative w-full sm:w-80 max-w-full sm:max-w-xs mt-2 sm:mt-0">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-            <Search className="w-5 h-5" />
-          </span>
-          <Input
-            type="text"
-            placeholder="Поиск по названию команды..."
-            value={teamQuery}
-            onChange={e => setTeamQuery(e.target.value)}
-            className="pl-10 pr-3 py-2 rounded-lg border border-slate-300 shadow-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 bg-white"
-          />
-        </div>
+        <AdminSearchInput value={teamQuery} onChange={setTeamQuery} placeholder="Поиск по названию команды..." />
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
             <Button className="flex items-center gap-2">
@@ -170,7 +176,7 @@ export function TeamsManagement() {
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Создать новую команду</DialogTitle>
-              <DialogDescription>Создайте команду и получите код для приглашения участников</DialogDescription>
+              <DialogDescription>Создайте команду и выберите контест</DialogDescription>
             </DialogHeader>
             <form className="space-y-4" onSubmit={handleCreateTeam}>
               <div className="space-y-2">
@@ -179,7 +185,14 @@ export function TeamsManagement() {
                 </label>
                 <Input id="teamName" placeholder="Введите название команды" value={newTeamName} onChange={e => setNewTeamName(e.target.value)} />
               </div>
-
+              <div className="space-y-2">
+                <label htmlFor="teamContest" className="text-sm font-medium">Контест</label>
+                <select id="teamContest" value={newTeamContestId} onChange={e => setNewTeamContestId(e.target.value)} className="w-full border rounded px-3 py-2">
+                  {mockContests.map(contest => (
+                    <option key={contest.id} value={contest.id}>{contest.name}</option>
+                  ))}
+                </select>
+              </div>
               <div className="space-y-2">
                 <label htmlFor="teamCode" className="text-sm font-medium">
                   Код команды
@@ -191,7 +204,6 @@ export function TeamsManagement() {
                   </Button>
                 </div>
               </div>
-
               <div className="flex justify-center gap-2 pt-2">
                 <Button type="button" variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
                   Отмена
@@ -202,74 +214,87 @@ export function TeamsManagement() {
           </DialogContent>
         </Dialog>
       </div>
-
       <div className="grid gap-4">
-        {teams.filter(team => team.name.toLowerCase().includes(teamQuery.trim().toLowerCase())).map((team) => (
-          <Card key={team.id}>
-            <CardHeader>
-              <div className="flex items-start justify-between">
+        {teams.filter(team => team.name.toLowerCase().includes(teamQuery.trim().toLowerCase())).map((team) => {
+          const contest = mockContests.find(c => c.id === team.contestId)
+          return (
+            <Card key={team.id}>
+              <CardHeader>
+                <div className="flex items-start justify-between">
+                  <div>
+                    <CardTitle className="text-xl flex items-center gap-2">
+                      <Users className="w-5 h-5" />
+                      {team.name}
+                    </CardTitle>
+                    <CardDescription className="mt-1">Код: {team.code}</CardDescription>
+                    <CardDescription className="mt-1 text-blue-700">Контест: {contest ? contest.name : "-"}</CardDescription>
+                  </div>
+                  <div className="flex gap-2 items-center">
+                    <Badge variant="outline">
+                      {team.members.length} участник{team.members.length !== 1 ? "ов" : ""}
+                    </Badge>
+                    <Button variant="outline" size="icon" onClick={() => handleEditOpen(team)} title="Редактировать участников">
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+
+              <CardContent className="space-y-4">
                 <div>
-                  <CardTitle className="text-xl flex items-center gap-2">
-                    <Users className="w-5 h-5" />
-                    {team.name}
-                  </CardTitle>
-                  <CardDescription className="mt-1">Код: {team.code}</CardDescription>
+                  <h4 className="font-medium text-slate-700 mb-2">Участники:</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {team.members.map((member) => (
+                      <div key={member.id} className="flex items-center gap-2 bg-slate-100 rounded-lg px-3 py-1">
+                        <Avatar className="w-6 h-6">
+                          <AvatarFallback className="text-xs">{member.username.charAt(0).toUpperCase()}</AvatarFallback>
+                        </Avatar>
+                        <span className="text-sm">{member.username}</span>
+                        {member.isLeader && (
+                          <Badge variant="secondary" className="text-xs">
+                            Лидер
+                          </Badge>
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <div className="flex gap-2 items-center">
-                  <Badge variant="outline">
-                    {team.members.length} участник{team.members.length !== 1 ? "ов" : ""}
-                  </Badge>
-                  <Button variant="outline" size="icon" onClick={() => handleEditOpen(team)} title="Редактировать участников">
-                    <Edit className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardHeader>
 
-            <CardContent className="space-y-4">
-              <div>
-                <h4 className="font-medium text-slate-700 mb-2">Участники:</h4>
-                <div className="flex flex-wrap gap-2">
-                  {team.members.map((member) => (
-                    <div key={member.id} className="flex items-center gap-2 bg-slate-100 rounded-lg px-3 py-1">
-                      <Avatar className="w-6 h-6">
-                        <AvatarFallback className="text-xs">{member.username.charAt(0).toUpperCase()}</AvatarFallback>
-                      </Avatar>
-                      <span className="text-sm">{member.username}</span>
-                      {member.isLeader && (
-                        <Badge variant="secondary" className="text-xs">
-                          Лидер
-                        </Badge>
-                      )}
-                    </div>
-                  ))}
+                <div>
+                  <h4 className="font-medium text-slate-700 mb-2">Ссылка-приглашение:</h4>
+                  <div className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg">
+                    <LinkIcon className="w-4 h-4 text-slate-500" />
+                    <code className="flex-1 text-sm text-slate-600">{team.inviteLink}</code>
+                    <Button variant="outline" size="sm" onClick={() => copyInviteLink(team.inviteLink)}>
+                      <Copy className="w-4 h-4" />
+                    </Button>
+                  </div>
                 </div>
-              </div>
-
-              <div>
-                <h4 className="font-medium text-slate-700 mb-2">Ссылка-приглашение:</h4>
-                <div className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg">
-                  <LinkIcon className="w-4 h-4 text-slate-500" />
-                  <code className="flex-1 text-sm text-slate-600">{team.inviteLink}</code>
-                  <Button variant="outline" size="sm" onClick={() => copyInviteLink(team.inviteLink)}>
-                    <Copy className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          )})}
       </div>
-
       {/* --- EDIT TEAM MEMBERS DIALOG --- */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Редактировать участников</DialogTitle>
-            <DialogDescription>Добавьте или удалите участников команды</DialogDescription>
+            <DialogTitle>Редактировать команду</DialogTitle>
+            <DialogDescription>Измените участников и контест</DialogDescription>
           </DialogHeader>
           {editTeam && (
-            <div className="space-y-4">
+            <form className="space-y-4" onSubmit={e => { e.preventDefault(); handleEditSave(); }}>
+              <div className="space-y-2">
+                <label htmlFor="editTeamName" className="text-sm font-medium">Название команды</label>
+                <Input id="editTeamName" value={editTeam.name} onChange={e => setEditTeam({ ...editTeam, name: e.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="editTeamContest" className="text-sm font-medium">Контест</label>
+                <select id="editTeamContest" value={editTeamContestId} onChange={e => setEditTeamContestId(e.target.value)} className="w-full border rounded px-3 py-2">
+                  {mockContests.map(contest => (
+                    <option key={contest.id} value={contest.id}>{contest.name}</option>
+                  ))}
+                </select>
+              </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Участники</label>
                 <div className="flex flex-col gap-2">
@@ -322,7 +347,7 @@ export function TeamsManagement() {
                 </Button>
                 <Button type="button" onClick={handleEditSave}>Сохранить</Button>
               </div>
-            </div>
+            </form>
           )}
         </DialogContent>
       </Dialog>

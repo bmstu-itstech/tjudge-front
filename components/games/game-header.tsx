@@ -28,12 +28,12 @@ const mockGames = [
   {
     id: "1",
     name: "Алгоритмы и структуры данных",
-    allowedFileTypes: ".py,.cpp"
+    allowedFileTypes: ".py"
   },
   {
     id: "2",
     name: "Машинное обучение",
-    allowedFileTypes: ".ipynb,.py"
+    allowedFileTypes: ".py"
   }
 ]
 
@@ -45,7 +45,7 @@ export function GameHeader({ gameId }: GameHeaderProps) {
   const { user } = useAuth()
 
   const game = mockGames.find(g => g.id === gameId)
-  const allowedFileTypes = game?.allowedFileTypes || ".py"
+  const allowedFileTypes = ".py"
 
   if (!user) return null;
 
@@ -145,12 +145,12 @@ export function GameHeader({ gameId }: GameHeaderProps) {
               <div className="flex-1 w-full">
                   <label htmlFor="file-upload" className="block w-full cursor-pointer border-2 border-dashed border-blue-200 rounded-lg p-2 min-h-[32px] text-center bg-blue-50 hover:bg-blue-100 transition-colors flex flex-col items-center justify-center gap-1">
                     <Upload className="w-5 h-5 text-blue-400 mb-1" />
-                    <span className="text-sm text-slate-700 font-medium">Загрузить решение ({allowedFileTypes.split(',').join(', ')} файл{allowedFileTypes.includes(',') ? 'ы' : ''})</span>
+                    <span className="text-sm text-slate-700 font-medium">Загрузить решение (только .py файл)</span>
                     <input
                       id="file-upload"
                     ref={fileInputRef}
                     type="file"
-                    accept={allowedFileTypes}
+                    accept=".py"
                     onChange={handleFileUpload}
                     disabled={uploading}
                       className="hidden"

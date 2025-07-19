@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/dialog"
 import { Plus, LinkIcon, Copy, Users, Search } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { AdminSearchInput } from "./AdminSearchInput"
+
 
 interface User {
   id: string
@@ -160,18 +162,7 @@ export function UsersManagement() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
         <h2 className="text-2xl font-bold text-slate-800 flex-shrink-0">Управление участниками</h2>
-        <div className="relative w-full sm:w-80 max-w-full sm:max-w-xs mt-2 sm:mt-0">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-            <Search className="w-5 h-5" />
-          </span>
-          <Input
-            type="text"
-            placeholder="Поиск по имени пользователя..."
-            value={userQuery}
-            onChange={e => setUserQuery(e.target.value)}
-            className="pl-10 pr-3 py-2 rounded-lg border border-slate-300 shadow-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 bg-white"
-          />
-        </div>
+        <AdminSearchInput value={userQuery} onChange={setUserQuery} placeholder="Поиск по имени пользователя..." />
         <div className="flex gap-2">
           <Dialog open={isGenerateLinkDialogOpen} onOpenChange={setIsGenerateLinkDialogOpen}>
             <DialogTrigger asChild>
@@ -270,34 +261,36 @@ export function UsersManagement() {
         </div>
       </div>
 
-      <div className="grid gap-4">
+      <div className="grid gap-3">
         {users.filter(user => user.username.toLowerCase().includes(userQuery.trim().toLowerCase())).map((user) => (
-          <Card key={user.id}>
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <Avatar>
-                    <AvatarFallback>{user.username.charAt(0).toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <CardTitle className="text-lg">{user.username}</CardTitle>
-                    {user.email && <CardDescription>{user.email}</CardDescription>}
+          <Card key={user.id} className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3 flex-1">
+                <Avatar className="w-10 h-10">
+                  <AvatarFallback className="text-sm">{user.username.charAt(0).toUpperCase()}</AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-semibold text-slate-900 truncate">{user.username}</span>
+                    {user.team && (
+                      <>
+                        <span className="text-slate-400">•</span>
+                        <span className="text-sm text-slate-600 truncate">{user.team.name}</span>
+                      </>
+                    )}
                   </div>
+                  {user.email && (
+                    <p className="text-sm text-slate-500 truncate">{user.email}</p>
+                  )}
                 </div>
-                <Badge className={getStatusColor(user.status)}>{getStatusText(user.status)}</Badge>
               </div>
-            </CardHeader>
-
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-slate-500" />
-                  <span className="text-sm text-slate-600">{user.team ? user.team.name : "Без команды"}</span>
-                </div>
-
+              
+              <div className="flex items-center gap-3">
+                <Badge className={getStatusColor(user.status)}>{getStatusText(user.status)}</Badge>
+                
                 {!user.team && user.status === "active" && (
                   <Select onValueChange={(teamId) => assignUserToTeam(user.id, teamId)}>
-                    <SelectTrigger className="w-48">
+                    <SelectTrigger className="w-40 h-8 text-xs">
                       <SelectValue placeholder="Назначить в команду" />
                     </SelectTrigger>
                     <SelectContent>
@@ -310,20 +303,19 @@ export function UsersManagement() {
                   </Select>
                 )}
               </div>
+            </div>
 
-              {user.registrationLink && (
-                <div>
-                  <h4 className="font-medium text-slate-700 mb-2">Ссылка для регистрации:</h4>
-                  <div className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg">
-                    <LinkIcon className="w-4 h-4 text-slate-500" />
-                    <code className="flex-1 text-sm text-slate-600">{user.registrationLink}</code>
-                    <Button variant="outline" size="sm" onClick={() => copyRegistrationLink(user.registrationLink!)}>
-                      <Copy className="w-4 h-4" />
-                    </Button>
-                  </div>
+            {user.registrationLink && (
+              <div className="mt-3 pt-3 border-t border-slate-200">
+                <div className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg">
+                  <LinkIcon className="w-4 h-4 text-slate-500 flex-shrink-0" />
+                  <code className="flex-1 text-sm text-slate-600 truncate">{user.registrationLink}</code>
+                  <Button variant="outline" size="sm" onClick={() => copyRegistrationLink(user.registrationLink!)} className="flex-shrink-0">
+                    <Copy className="w-4 h-4" />
+                  </Button>
                 </div>
-              )}
-            </CardContent>
+              </div>
+            )}
           </Card>
         ))}
       </div>

@@ -32,9 +32,14 @@ export function Header() {
 
             <nav className="hidden md:flex items-center space-x-6">
               {user && (
-                <Link href="/" className="text-slate-600 hover:text-slate-800 transition-colors">
-                  Игры
-                </Link>
+              <Link href="/" className="text-slate-600 hover:text-slate-800 transition-colors">
+                Игры
+              </Link>
+              )}
+              {user && !user.isAdmin && (
+                <Link href="/profile" className="text-slate-600 hover:text-slate-800 transition-colors">
+                  Мой турнир
+              </Link>
               )}
               {user?.isAdmin && (
                 <Link href="/admin" className="text-slate-600 hover:text-slate-800 transition-colors">

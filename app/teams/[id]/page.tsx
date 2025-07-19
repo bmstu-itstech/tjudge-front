@@ -60,4 +60,5 @@ export default function TeamPage({ params }: { params: { id: string } }) {
       </Card>
     </div>
   )
-} 
+}
+

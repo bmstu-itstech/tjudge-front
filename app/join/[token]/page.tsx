@@ -8,4 +8,5 @@ export default function JoinRedirectPage({ params }: { params: { token: string }
     router.replace(`/register/${params.token}`)
   }, [params.token, router])
   return null
-} 
+}
+

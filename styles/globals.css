@@ -2,13 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ALS Sector Font */
+@font-face {
+  font-family: 'ALS Sector';
+  src: url('./ALS-Sector-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ALS Sector';
+  src: url('./ALS-Sector-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'ALS Sector', Arial, Helvetica, sans-serif;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+  
+  /* Fix for underline in bold text - use normal weight for underlined elements */
+  .underline-fix {
+    font-weight: 400 !important;
+  }
+  
+  /* Special class for links that need to be bold but with working underline */
+  .link-bold {
+    font-weight: 700;
+  }
+  
+  .link-bold:hover {
+    font-weight: 400;
+    text-decoration: underline;
   }
 }
 
@@ -90,5 +122,16 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'ALS Sector', Arial, Helvetica, sans-serif;
+  }
+  
+  /* Fix for links with underline - ensure they use normal weight */
+  a[href]:hover {
+    font-weight: 400;
+  }
+  
+  /* Fix for button links with underline */
+  button.link:hover {
+    font-weight: 400;
   }
 }

@@ -49,4 +49,5 @@ export default function RegisterByTokenPage({ params }: { params: { token: strin
       </Card>
     </div>
   )
-} 
+}
+
