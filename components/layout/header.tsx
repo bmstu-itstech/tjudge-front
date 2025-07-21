@@ -5,7 +5,7 @@ import { useAuth } from "@/components/providers/auth-provider"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { LogOut, Settings, User, AlertCircle } from "lucide-react"
+import { LogOut, Settings, User, AlertCircle, Trophy } from "lucide-react"
 import { useState } from "react"
 
 export function Header() {
@@ -37,7 +37,7 @@ export function Header() {
               </Link>
               )}
               {user && !user.isAdmin && (
-                <Link href="/profile" className="text-slate-600 hover:text-slate-800 transition-colors">
+                <Link href="/my-tournament" className="text-slate-600 hover:text-slate-800 transition-colors">
                   Мой турнир
               </Link>
               )}
@@ -67,6 +67,12 @@ export function Header() {
                         <span className="font-medium">{user.username}</span>
                         {user.team && <span className="text-sm text-slate-500">{user.team.name}</span>}
                       </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/my-tournament" className="flex items-center">
+                        <Trophy className="mr-2 h-4 w-4" />
+                        Мой турнир
+                      </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link href="/profile" className="flex items-center">

@@ -134,4 +134,43 @@ body {
   button.link:hover {
     font-weight: 400;
   }
+  
+  /* Плавные анимации для таблиц лидеров */
+  .leaderboard-row {
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, opacity;
+  }
+  
+  /* Анимация для изменения позиций */
+  .leaderboard-row.changing {
+    animation: positionChange 0.5s ease-in-out;
+  }
+  
+  @keyframes positionChange {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.02);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  
+  /* Плавное изменение очков */
+  .score-change {
+    animation: scoreUpdate 0.3s ease-in-out;
+  }
+  
+  @keyframes scoreUpdate {
+    0% {
+      opacity: 0.7;
+      transform: scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
 }

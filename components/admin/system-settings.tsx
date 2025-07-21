@@ -6,8 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
-import { Textarea } from "@/components/ui/textarea"
-import { Save, RefreshCw, Database, Bell, Shield, Clock } from "lucide-react"
+import { Save, RefreshCw, Shield, Clock } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
 
@@ -15,14 +14,10 @@ export function SystemSettings() {
   const [settings, setSettings] = useState({
     siteName: "Bauman Code Tournament",
     maxTeamSize: 4,
-    allowLateRegistration: true,
     autoStartGames: false,
-    notificationsEnabled: true,
-    maintenanceMode: false,
     judgeTimeout: 30,
     maxFileSize: 10,
     allowedFileTypes: ".py,.cpp,.java",
-    systemMessage: "",
   })
 
   const { toast } = useToast()
@@ -96,29 +91,11 @@ export function SystemSettings() {
             </div>
 
             <div className="flex items-center justify-between">
-              <Label htmlFor="lateRegistration">Разрешить позднюю регистрацию</Label>
-              <Switch
-                id="lateRegistration"
-                checked={settings.allowLateRegistration}
-                onCheckedChange={(checked) => setSettings({ ...settings, allowLateRegistration: checked })}
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
               <Label htmlFor="autoStart">Автоматический запуск игр</Label>
               <Switch
                 id="autoStart"
                 checked={settings.autoStartGames}
                 onCheckedChange={(checked) => setSettings({ ...settings, autoStartGames: checked })}
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <Label htmlFor="maintenance">Режим обслуживания</Label>
-              <Switch
-                id="maintenance"
-                checked={settings.maintenanceMode}
-                onCheckedChange={(checked) => setSettings({ ...settings, maintenanceMode: checked })}
               />
             </div>
           </CardContent>
@@ -165,73 +142,6 @@ export function SystemSettings() {
                 value={settings.allowedFileTypes}
                 onChange={(e) => setSettings({ ...settings, allowedFileTypes: e.target.value })}
               />
-            </div>
-          </CardContent>
-        </Card>
-
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Bell className="w-5 h-5" />
-              Уведомления
-            </CardTitle>
-            <CardDescription>Настройки системных уведомлений</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="notifications">Включить уведомления</Label>
-              <Switch
-                id="notifications"
-                checked={settings.notificationsEnabled}
-                onCheckedChange={(checked) => setSettings({ ...settings, notificationsEnabled: checked })}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="systemMessage">Системное сообщение</Label>
-              <Textarea
-                id="systemMessage"
-                placeholder="Введите сообщение для отображения всем пользователям"
-                value={settings.systemMessage}
-                onChange={(e) => setSettings({ ...settings, systemMessage: e.target.value })}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Database */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Database className="w-5 h-5" />
-              База данных
-            </CardTitle>
-            <CardDescription>Управление данными системы</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Button variant="outline" className="w-full bg-transparent">
-              Создать резервную копию
-            </Button>
-
-            <Button variant="outline" className="w-full bg-transparent">
-              Восстановить из копии
-            </Button>
-
-            <Button variant="destructive" className="w-full">
-              Очистить все результаты
-            </Button>
-
-            <div className="text-sm text-slate-600 p-3 bg-slate-50 rounded-lg">
-              <p>
-                <strong>Последняя резервная копия:</strong> 12.01.2025 14:30
-              </p>
-              <p>
-                <strong>Размер базы данных:</strong> 45.2 МБ
-              </p>
-              <p>
-                <strong>Количество записей:</strong> 1,247
-              </p>
             </div>
           </CardContent>
         </Card>

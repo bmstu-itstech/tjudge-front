@@ -1,180 +1,244 @@
 "use client"
 import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useRouter } from "next/navigation"
+import { Textarea } from "@/components/ui/textarea"
+import { Switch } from "@/components/ui/switch"
+import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, User, Mail, Shield, Bell, Palette, Settings, Trophy, FileText } from "lucide-react"
 import { ThemeToggle } from "@/components/ThemeToggle"
-import { Upload, FileText } from "lucide-react"
-import { useRef } from "react"
 
 const mockUser = {
   username: "alex_dev",
   email: "alex@example.com",
+  fullName: "Александр Петров",
+  bio: "Разработчик программного обеспечения, участник соревнований по программированию",
+  joinDate: "2023-01-15",
   team: {
-    id: "1",
     name: "Code Warriors",
-    members: [
-      { id: "1", username: "alex_dev", isLeader: true },
-      { id: "2", username: "maria_code", isLeader: false },
-    ],
-    position: 2,
-    score: 1180,
-  },
-}
-
-const mockContests = [
-  {
-    id: "1",
-    name: "Весенний контест 2024",
-    date: "2024-05-20",
-    games: [
-      { id: "g1", name: "Задача A", description: "Решите задачу A", rules: "Обычные правила", isCurrent: true },
-      { id: "g2", name: "Задача B", description: "Решите задачу B", rules: "Обычные правила", isCurrent: false },
-    ]
-  },
-  {
-    id: "2",
-    name: "Осенний контест 2023",
-    date: "2023-11-10",
-    games: [
-      { id: "g3", name: "Задача X", description: "Решите задачу X", rules: "Обычные правила", isCurrent: false },
-    ]
+    role: "Лидер"
   }
-]
-
-const currentContest = mockContests[0]
-const currentGame = currentContest.games.find(g => g.isCurrent)
+}
 
 export default function ProfilePage() {
   const [password, setPassword] = useState("")
-  const router = useRouter()
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const [lastUpload, setLastUpload] = useState<string | null>(null)
-  const [uploading, setUploading] = useState(false)
+  const [newPassword, setNewPassword] = useState("")
+  const [emailNotifications, setEmailNotifications] = useState(true)
+  const [pushNotifications, setPushNotifications] = useState(false)
+  const [showEmail, setShowEmail] = useState(true)
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file) return
-    if (!file.name.endsWith(".py")) {
-      alert("Можно загружать только .py файлы")
+  const handlePasswordChange = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (newPassword.length < 6) {
+      alert("Пароль должен содержать минимум 6 символов")
       return
     }
-    setUploading(true)
-    setTimeout(() => {
-      setLastUpload(file.name)
-      setUploading(false)
-      if (fileInputRef.current) fileInputRef.current.value = ""
-    }, 1000)
+    alert("Пароль успешно изменён")
+    setPassword("")
+    setNewPassword("")
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 p-4">
-      <Link
-        href="/"
-        className="mb-8 flex items-center justify-center gap-2 text-blue-700 text-xl font-semibold transition-colors hover:text-blue-900 hover:bg-blue-50 px-5 py-2.5 rounded-xl shadow focus:outline-none focus:ring-2 focus:ring-blue-300"
-        style={{ textDecoration: 'none' }}
-      >
-        <ArrowLeft className="w-6 h-6" />
-        На главную
-      </Link>
-      <div className="w-full max-w-3xl space-y-8">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl">Текущий контест: {currentContest.name}</CardTitle>
-            <CardDescription>Дата: {new Date(currentContest.date).toLocaleDateString("ru-RU")}</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex flex-col md:flex-row gap-6">
-              <div className="flex-1">
-                <div className="mb-2 text-lg font-semibold">Текущая игра: {currentGame?.name}</div>
-                <div className="text-slate-700 mb-2">{currentGame?.description}</div>
-                <div className="text-xs text-slate-500 whitespace-pre-line">{currentGame?.rules}</div>
-              </div>
-              <div className="flex-1">
-                <div className="mb-2 text-lg font-semibold">Ваша команда: {mockUser.team.name}</div>
-                <div className="flex flex-wrap gap-2 mb-2">
-                  {mockUser.team.members.map(m => (
-                    <span key={m.id} className="inline-flex items-center gap-1 px-2 py-1 bg-slate-100 rounded text-sm">
-                      {m.username}
-                      {m.isLeader && <Badge variant="secondary" className="text-xs">Лидер</Badge>}
-                    </span>
-                  ))}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      <div className="container mx-auto px-4 py-8">
+        <Link
+          href="/"
+          className="mb-8 flex items-center justify-center gap-2 text-blue-700 text-xl font-semibold transition-colors hover:text-blue-900 hover:bg-blue-50 px-5 py-2.5 rounded-xl shadow focus:outline-none focus:ring-2 focus:ring-blue-300"
+          style={{ textDecoration: 'none' }}
+        >
+          <ArrowLeft className="w-6 h-6" />
+          На главную
+        </Link>
+
+        <div className="max-w-4xl mx-auto space-y-8">
+          {/* Профиль пользователя */}
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-2xl flex items-center gap-2">
+                <User className="w-6 h-6" />
+                Профиль пользователя
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="username">Имя пользователя</Label>
+                    <Input id="username" value={mockUser.username} disabled />
+                  </div>
+                  <div>
+                    <Label htmlFor="fullName">Полное имя</Label>
+                    <Input id="fullName" value={mockUser.fullName} />
+                  </div>
+                  <div>
+                    <Label htmlFor="email">Email</Label>
+                    <div className="flex items-center gap-2">
+                      <Input id="email" value={mockUser.email} />
+                      <Switch 
+                        checked={showEmail} 
+                        onCheckedChange={setShowEmail}
+                      />
+                      <span className="text-sm text-slate-600">Публичный</span>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex gap-4 items-center">
-                  <span className="text-slate-700">Позиция: <b>{mockUser.team.position}</b></span>
-                  <span className="text-slate-700">Баллы: <b>{mockUser.team.score}</b></span>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="bio">О себе</Label>
+                    <Textarea 
+                      id="bio" 
+                      value={mockUser.bio} 
+                      rows={4}
+                      placeholder="Расскажите о себе..."
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="text-sm text-slate-600">Дата регистрации</div>
+                    <div className="text-sm font-medium">
+                      {new Date(mockUser.joinDate).toLocaleDateString("ru-RU")}
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="text-sm text-slate-600">Команда</div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">{mockUser.team.name}</span>
+                      <Badge variant="secondary">{mockUser.team.role}</Badge>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="mt-6">
-              <div className="font-semibold mb-2">Загрузить решение (.py):</div>
-              <label htmlFor="file-upload" className="block w-full cursor-pointer border-2 border-dashed border-blue-200 rounded-lg p-2 min-h-[32px] text-center bg-blue-50 hover:bg-blue-100 transition-colors flex flex-col items-center justify-center gap-1">
-                <Upload className="w-5 h-5 text-blue-400 mb-1" />
-                <span className="text-sm text-slate-700 font-medium">Загрузить решение (только .py файл)</span>
-                <input
-                  id="file-upload"
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".py"
-                  onChange={handleFileUpload}
-                  disabled={uploading}
-                  className="hidden"
+              <div className="flex justify-end">
+                <Button>Сохранить изменения</Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Смена пароля */}
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-xl flex items-center gap-2">
+                <Shield className="w-5 h-5" />
+                Смена пароля
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handlePasswordChange} className="space-y-4">
+                <div>
+                  <Label htmlFor="currentPassword">Текущий пароль</Label>
+                  <Input 
+                    id="currentPassword" 
+                    type="password" 
+                    value={password} 
+                    onChange={e => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="newPassword">Новый пароль</Label>
+                  <Input 
+                    id="newPassword" 
+                    type="password" 
+                    value={newPassword} 
+                    onChange={e => setNewPassword(e.target.value)}
+                    required
+                  />
+                  <div className="text-xs text-slate-500 mt-1">
+                    Минимум 6 символов
+                  </div>
+                </div>
+                <div className="flex justify-end">
+                  <Button type="submit">Сменить пароль</Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+
+          {/* Настройки уведомлений */}
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-xl flex items-center gap-2">
+                <Bell className="w-5 h-5" />
+                Настройки уведомлений
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="font-medium">Email уведомления</div>
+                  <div className="text-sm text-slate-600">
+                    Получать уведомления о новых играх и результатах
+                  </div>
+                </div>
+                <Switch 
+                  checked={emailNotifications} 
+                  onCheckedChange={setEmailNotifications}
                 />
-                <Button
-                  type="button"
-                  onClick={e => { e.preventDefault(); fileInputRef.current?.click(); }}
-                  disabled={uploading}
-                  className="mt-1"
-                  size="sm"
-                >
-                  {uploading ? "Загрузка..." : "Выбрать файл"}
-                </Button>
-              </label>
-              {lastUpload && (
-                <div className="flex items-center gap-2 text-sm text-green-700 bg-green-50 px-3 py-2 rounded-lg mt-2">
-                  <FileText className="w-4 h-4" />
-                  <span>Загружено: {lastUpload}</span>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-xl">История участия</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="list-disc pl-6 text-slate-700 text-sm space-y-1">
-              {mockContests.map(contest => (
-                <li key={contest.id}>
-                  <span className="font-semibold">{contest.name}</span> ({new Date(contest.date).toLocaleDateString("ru-RU")}) — игр: {contest.games.length}
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-xl">Смена пароля</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form className="space-y-2 pt-2" onSubmit={e => { e.preventDefault(); alert("Пароль изменён (заглушка)") }}>
-              <Label htmlFor="password">Новый пароль</Label>
-              <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} />
-              <div className="flex justify-center pt-2">
-                <Button type="submit" className="w-full">Сменить пароль</Button>
               </div>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-      <div className="flex justify-center mt-6">
-        <ThemeToggle />
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="font-medium">Push уведомления</div>
+                  <div className="text-sm text-slate-600">
+                    Уведомления в браузере
+                  </div>
+                </div>
+                <Switch 
+                  checked={pushNotifications} 
+                  onCheckedChange={setPushNotifications}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Внешний вид */}
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-xl flex items-center gap-2">
+                <Palette className="w-5 h-5" />
+                Внешний вид
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="font-medium">Тема оформления</div>
+                  <div className="text-sm text-slate-600">
+                    Выберите светлую или темную тему
+                  </div>
+                </div>
+                <ThemeToggle />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Быстрые действия */}
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-xl flex items-center gap-2">
+                <Settings className="w-5 h-5" />
+                Быстрые действия
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Button asChild variant="outline" className="h-auto p-4 flex flex-col gap-2">
+                  <Link href="/my-tournament">
+                    <Trophy className="w-6 h-6" />
+                    <span>Мой турнир</span>
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="h-auto p-4 flex flex-col gap-2">
+                  <Link href="/games">
+                    <FileText className="w-6 h-6" />
+                    <span>Все игры</span>
+                  </Link>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   )

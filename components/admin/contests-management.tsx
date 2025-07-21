@@ -6,7 +6,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Plus, Edit, Trash2 } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Badge } from "@/components/ui/badge"
+import { Plus, Edit, Trash2, X } from "lucide-react"
 import { format } from "date-fns"
 import { AdminSearchInput } from "./AdminSearchInput"
 
@@ -47,6 +49,7 @@ export function ContestsManagement() {
     date: "",
     games: []
   })
+  const [selectedGameId, setSelectedGameId] = useState<string>("")
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [editContest, setEditContest] = useState<Contest | null>(null)
   const [query, setQuery] = useState("")
@@ -100,25 +103,61 @@ export function ContestsManagement() {
                 <Input id="contest-date" type="date" value={newContest.date} onChange={e => setNewContest({ ...newContest, date: e.target.value })} />
               </div>
               <div className="space-y-2">
-                <Label>Игры</Label>
-                <div className="flex flex-col gap-2">
-                  {mockGames.map(game => (
-                    <label key={game.id} className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        checked={newContest.games.some(g => g.id === game.id)}
-                        onChange={e => {
-                          if (e.target.checked) {
-                            setNewContest({ ...newContest, games: [...newContest.games, game] })
-                          } else {
-                            setNewContest({ ...newContest, games: newContest.games.filter(g => g.id !== game.id) })
-                          }
-                        }}
-                      />
-                      <span>{game.name} <span className="text-xs text-slate-400">({game.tag})</span></span>
-                    </label>
-                  ))}
+                <Label>Добавить игру</Label>
+                <div className="flex gap-2">
+                  <Select value={selectedGameId} onValueChange={setSelectedGameId}>
+                    <SelectTrigger className="flex-1">
+                      <SelectValue placeholder="Выберите игру" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {mockGames
+                        .filter(game => !newContest.games.some(g => g.id === game.id))
+                        .map(game => (
+                          <SelectItem key={game.id} value={game.id}>
+                            {game.name} ({game.tag})
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      if (selectedGameId) {
+                        const game = mockGames.find(g => g.id === selectedGameId)
+                        if (game) {
+                          setNewContest({ ...newContest, games: [...newContest.games, game] })
+                          setSelectedGameId("")
+                        }
+                      }
+                    }}
+                    disabled={!selectedGameId}
+                  >
+                    <Plus className="w-4 h-4" />
+                  </Button>
                 </div>
+                
+                {newContest.games.length > 0 && (
+                  <div className="space-y-2">
+                    <Label>Выбранные игры:</Label>
+                    <div className="flex flex-wrap gap-2">
+                      {newContest.games.map(game => (
+                        <Badge key={game.id} variant="secondary" className="flex items-center gap-1">
+                          {game.name} ({game.tag})
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="h-auto p-0 ml-1"
+                            onClick={() => setNewContest({ ...newContest, games: newContest.games.filter(g => g.id !== game.id) })}
+                          >
+                            <X className="w-3 h-3" />
+                          </Button>
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="flex justify-end gap-2">
                 <Button type="button" variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
