@@ -235,4 +235,4 @@ export default function MyTournamentPage() {
       </div>
     </div>
   )
-} 
+}
