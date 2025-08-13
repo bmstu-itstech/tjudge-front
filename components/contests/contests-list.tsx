@@ -16,7 +16,7 @@ interface Contest {
     type: "public" | "private"
     startTime: string
     endTime: string
-    isUserParticipant?: boolean // Флаг участия пользователя
+    isUserParticipant?: boolean
 }
 
 export function ContestsList() {
@@ -46,7 +46,6 @@ export function ContestsList() {
                     isUserParticipant: true
                 },
 
-                // Предстоящие контесты
                 {
                     id: "3",
                     name: "Осенний кубок алгоритмов",
@@ -279,7 +278,7 @@ export function ContestsList() {
 
                     <div className="flex pt-4">
                         <Button variant="outline" size="sm" asChild>
-                            <Link href={`/games/${contest.id}/display`} title="">
+                            <Link href={`/contests/${contest.id}/`} title="">
                                 <ExternalLink className="w-4 h-4" />
                                 Открыть
                             </Link>
