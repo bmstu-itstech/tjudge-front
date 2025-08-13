@@ -168,7 +168,7 @@ export default function ContestPage({ params }: ContestPageProps) {
                     </Link>
 
                     <Button variant="outline" className="flex items-center gap-2">
-                        <Link href="/large-leaderboard" className="flex items-center gap-2">
+                        <Link href="/contests/leaderboard" className="flex items-center gap-2">
                             <Maximize className="w-4 h-4" />
                             Полный экран
                         </Link>
