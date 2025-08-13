@@ -6,4 +6,3 @@ export default function LargeLeaderboardPage() {
   const gameId = "1"
   return <LargeLeaderboard gameId={gameId} />
 }
-

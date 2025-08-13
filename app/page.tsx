@@ -37,7 +37,6 @@ export default function HomePage() {
       <Header />
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="text-center mb-10">
-          <h1 className="text-5xl md:text-6xl font-bold text-slate-800 mb-4">Bauman Code Tournament</h1>
           <p className="text-xl text-slate-600 mb-8">Соревнования по программированию для студентов МГТУ им. Н.Э. Баумана</p>
         </div>
         <div className="space-y-10">
