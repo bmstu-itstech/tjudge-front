@@ -235,14 +235,10 @@ export default function ContestPage({ params }: ContestPageProps) {
                             <Users className="w-4 h-4" />
                             <span>{contest.participants} участников</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <FileText className="w-4 h-4" />
-                            <span>{contest.totalSubmissions} решений</span>
-                        </div>
                         {contest.myTeam && (
                             <div className="flex items-center gap-2">
                                 <Trophy className="w-4 h-4" />
-                                <span>Команда: {contest.myTeam.name} (#{contest.myTeam.rank})</span>
+                                <span>Команда: {contest.myTeam.name}</span>
                             </div>
                         )}
                     </div>
