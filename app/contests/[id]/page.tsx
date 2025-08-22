@@ -20,7 +20,7 @@ import {
     CheckCircle,
     Circle,
     XCircle,
-    AlertCircle, ExternalLink
+    AlertCircle
 } from "lucide-react"
 import {GameLeaderboard} from "@/components/games/game-leaderboard";
 
@@ -30,11 +30,11 @@ interface ContestPageProps {
     }
 }
 
-interface Problem {
+interface Game {
     id: string
     name: string
     tag: string
-    status: "solved" | "attempted" | "not_started" | "wrong"
+    status: "started" | "not_started" | "error"
     points?: number
     maxPoints: number
 }
@@ -62,41 +62,41 @@ export default function ContestPage({ params }: ContestPageProps) {
         }
     }
 
-    const problems: Problem[] = [
+    const games: Game[] = [
         {
             id: "a",
             name: "Сумма массива",
-            tag: "problem_a",
-            status: "solved",
+            tag: "game_a",
+            status: "started",
             points: 100,
             maxPoints: 100
         },
         {
             id: "b",
             name: "Поиск в строке",
-            tag: "problem_b",
-            status: "attempted",
+            tag: "game_b",
+            status: "started",
             points: 60,
             maxPoints: 100
         },
         {
             id: "c",
             name: "Динамическое программирование",
-            tag: "problem_c",
-            status: "wrong",
+            tag: "game_c",
+            status: "error",
             maxPoints: 100
         },
         {
             id: "d",
             name: "Графы и кратчайшие пути",
-            tag: "problem_d",
+            tag: "game_d",
             status: "not_started",
             maxPoints: 100
         },
         {
             id: "e",
             name: "Структуры данных",
-            tag: "problem_e",
+            tag: "game_e",
             status: "not_started",
             maxPoints: 100
         }
@@ -115,11 +115,9 @@ export default function ContestPage({ params }: ContestPageProps) {
 
     const getStatusIcon = (status: string) => {
         switch (status) {
-            case "solved":
-                return <CheckCircle className="w-5 h-5 text-green-600" />
-            case "attempted":
-                return <AlertCircle className="w-5 h-5 text-yellow-600" />
-            case "wrong":
+            case "started":
+                return <CheckCircle className="w-5 h-5 text-blue-600" />
+            case "error":
                 return <XCircle className="w-5 h-5 text-red-600" />
             default:
                 return <Circle className="w-5 h-5 text-slate-400" />
@@ -128,11 +126,9 @@ export default function ContestPage({ params }: ContestPageProps) {
 
     const getStatusColor = (status: string) => {
         switch (status) {
-            case "solved":
-                return "text-green-700 bg-green-50 border-green-200"
-            case "attempted":
-                return "text-yellow-700 bg-yellow-50 border-yellow-200"
-            case "wrong":
+            case "started":
+                return "text-blue-700 bg-blue-50 border-blue-200"
+            case "error":
                 return "text-red-700 bg-red-50 border-red-200"
             default:
                 return "text-slate-700 bg-slate-50 border-slate-200"
@@ -141,14 +137,12 @@ export default function ContestPage({ params }: ContestPageProps) {
 
     const getStatusText = (status: string) => {
         switch (status) {
-            case "solved":
-                return "Решена"
-            case "attempted":
-                return "Частично"
-            case "wrong":
-                return "Неверно"
+            case "started":
+                return "Приступил"
+            case "error":
+                return "Ошибка программы"
             default:
-                return "Не начата"
+                return "Не приступал"
         }
     }
 
@@ -244,9 +238,9 @@ export default function ContestPage({ params }: ContestPageProps) {
                     </div>
                 </div>
 
-                <Tabs defaultValue="problems" className="w-full">
+                <Tabs defaultValue="games" className="w-full">
                     <TabsList className="flex w-auto mx-auto mb-6">
-                        <TabsTrigger value="problems" className="flex items-center gap-2">
+                        <TabsTrigger value="games" className="flex items-center gap-2">
                             <FileText className="w-4 h-4" />
                             Задачи
                         </TabsTrigger>
@@ -260,9 +254,9 @@ export default function ContestPage({ params }: ContestPageProps) {
                         </TabsTrigger>
                     </TabsList>
 
-                    <TabsContent value="problems" className="mt-2">
+                    <TabsContent value="games" className="mt-2">
                         <div className="grid gap-4">
-                            {problems.map((problem, index) => (
+                            {games.map((problem, index) => (
                                 <Card key={problem.id} className="shadow-lg hover:shadow-xl transition-all duration-300">
                                     <CardContent className="p-6">
                                         <div className="flex items-center justify-between">
@@ -292,7 +286,7 @@ export default function ContestPage({ params }: ContestPageProps) {
                                             </div>
 
                                             <Button asChild variant="outline">
-                                                <Link href={`/games/${contest.id}/problems/${problem.id}`}>
+                                                <Link href={`/contests/${contest.id}/game/${problem.id}`}>
                                                     Открыть
                                                 </Link>
                                             </Button>
