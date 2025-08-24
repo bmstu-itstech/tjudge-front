@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Link from "next/link"
+import {GameLeaderboard} from "@/components/games/game-leaderboard"
+
 import {
     ArrowLeft,
     Trophy,
@@ -20,9 +22,7 @@ import {
     CheckCircle,
     Circle,
     XCircle,
-    AlertCircle
 } from "lucide-react"
-import {GameLeaderboard} from "@/components/games/game-leaderboard";
 
 interface ContestPageProps {
     params: {
@@ -58,7 +58,7 @@ export default function ContestPage({ params }: ContestPageProps) {
         myTeam: {
             name: "CodeMasters",
             members: 3,
-            rank: 12
+            rank: 1
         }
     }
 
@@ -93,13 +93,6 @@ export default function ContestPage({ params }: ContestPageProps) {
             status: "not_started",
             maxPoints: 100
         },
-        {
-            id: "e",
-            name: "Структуры данных",
-            tag: "game_e",
-            status: "not_started",
-            maxPoints: 100
-        }
     ]
 
     const formatDateTime = (dateString: string) => {
@@ -242,7 +235,7 @@ export default function ContestPage({ params }: ContestPageProps) {
                     <TabsList className="flex w-auto mx-auto mb-6">
                         <TabsTrigger value="games" className="flex items-center gap-2">
                             <FileText className="w-4 h-4" />
-                            Задачи
+                            Игры
                         </TabsTrigger>
                         <TabsTrigger value="team" className="flex items-center gap-2">
                             <UsersRound className="w-4 h-4" />

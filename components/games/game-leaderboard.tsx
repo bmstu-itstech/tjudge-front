@@ -1,219 +1,291 @@
-"use client"
+import React, { useState, useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { ChevronUp, ChevronDown, Trophy, Medal, Award } from 'lucide-react';
 
-import { useState, useEffect, useRef } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Trophy, Medal, Award, AlertCircle, Crown } from "lucide-react"
-import { cn } from "@/lib/utils"
+interface GameResult {
+    gameId: string;
+    gameName: string;
+    points?: number;
+    maxPoints: number;
+    rank?: number;
+    hasError: boolean;
+}
 
-interface LeaderboardEntry {
-  id: string
-  position: number
-  teamName: string
-  score: number
-  error?: string
+interface TeamLeaderboard {
+    teamId: string;
+    teamName: string;
+    totalPoints: number;
+    overallRank: number;
+    gameResults: GameResult[];
 }
 
 interface GameLeaderboardProps {
-  gameId: string
+    gameId: string;
 }
 
+type SortField = 'teamName' | 'totalPoints' | 'overallRank' | string; // string для gameId
+type SortDirection = 'asc' | 'desc';
+
 export function GameLeaderboard({ gameId }: GameLeaderboardProps) {
-  const [entries, setEntries] = useState<LeaderboardEntry[]>([])
-  const [loading, setLoading] = useState(true)
-  const [isUpdating, setIsUpdating] = useState(false)
-  const [mounted, setMounted] = useState(false)
-  const previousEntriesRef = useRef<LeaderboardEntry[]>([])
+    const mockGames = [
+        { id: 'a', name: 'Сумма массива', maxPoints: 100 },
+        { id: 'b', name: 'Поиск в строке', maxPoints: 100 },
+        { id: 'c', name: 'Динамическое программирование', maxPoints: 100 },
+        { id: 'd', name: 'Графы и кратчайшие пути', maxPoints: 100 }
+    ];
 
-  // Начальные данные
-  const initialEntries: LeaderboardEntry[] = [
-    { id: "1", position: 1, teamName: "Code Warriors", score: 1250 },
-    { id: "2", position: 2, teamName: "Debug Masters", score: 1180 },
-    { id: "3", position: 3, teamName: "Syntax Heroes", score: 1050 },
-    { id: "4", position: 4, teamName: "Algorithm Aces", score: 980 },
-    { id: "5", position: 5, teamName: "Binary Beasts", score: 0, error: "Compilation error" },
-    { id: "6", position: 6, teamName: "Logic Lords", score: 850 },
-    { id: "7", position: 7, teamName: "Function Force", score: 780 },
-    { id: "8", position: 8, teamName: "Variable Vikings", score: 720 },
-  ]
+    const mockData: TeamLeaderboard[] = [
+        {
+            teamId: '1',
+            teamName: 'CodeMasters',
+            totalPoints: 340,
+            overallRank: 1,
+            gameResults: [
+                { gameId: 'a', gameName: 'Сумма массива', points: 100, maxPoints: 100, rank: 1, hasError: false },
+                { gameId: 'b', gameName: 'Поиск в строке', points: 85, maxPoints: 100, rank: 3, hasError: false },
+                { gameId: 'c', gameName: 'Динамическое программирование', points: 95, maxPoints: 100, rank: 2, hasError: false },
+                { gameId: 'd', gameName: 'Графы и кратчайшие пути', points: 60, maxPoints: 100, rank: 8, hasError: false }
+            ]
+        },
+        {
+            teamId: '2',
+            teamName: 'AlgoWarriors',
+            totalPoints: 330,
+            overallRank: 2,
+            gameResults: [
+                { gameId: 'a', gameName: 'Сумма массива', points: 95, maxPoints: 100, rank: 2, hasError: false },
+                { gameId: 'b', gameName: 'Поиск в строке', points: 100, maxPoints: 100, rank: 1, hasError: false },
+                { gameId: 'c', gameName: 'Динамическое программирование', points: 75, maxPoints: 100, rank: 5, hasError: false },
+                { gameId: 'd', gameName: 'Графы и кратчайшие пути', points: 60, maxPoints: 100, rank: 7, hasError: false }
+            ]
+        },
+        {
+            teamId: '3',
+            teamName: 'ByteBusters',
+            totalPoints: 315,
+            overallRank: 3,
+            gameResults: [
+                { gameId: 'a', gameName: 'Сумма массива', points: 90, maxPoints: 100, rank: 3, hasError: false },
+                { gameId: 'b', gameName: 'Поиск в строке', points: 90, maxPoints: 100, rank: 2, hasError: false },
+                { gameId: 'c', gameName: 'Динамическое программирование', maxPoints: 100, hasError: true },
+                { gameId: 'd', gameName: 'Графы и кратчайшие пути', points: 135, maxPoints: 100, rank: 1, hasError: false }
+            ]
+        },
+        {
+            teamId: '4',
+            teamName: 'LogicLords',
+            totalPoints: 280,
+            overallRank: 4,
+            gameResults: [
+                { gameId: 'a', gameName: 'Сумма массива', points: 80, maxPoints: 100, rank: 5, hasError: false },
+                { gameId: 'b', gameName: 'Поиск в строке', points: 70, maxPoints: 100, rank: 6, hasError: false },
+                { gameId: 'c', gameName: 'Динамическое программирование', points: 100, maxPoints: 100, rank: 1, hasError: false },
+                { gameId: 'd', gameName: 'Графы и кратчайшие пути', points: 30, maxPoints: 100, rank: 12, hasError: false }
+            ]
+        },
+        {
+            teamId: '5',
+            teamName: 'DataDynamos',
+            totalPoints: 275,
+            overallRank: 5,
+            gameResults: [
+                { gameId: 'a', gameName: 'Сумма массива', points: 85, maxPoints: 100, rank: 4, hasError: false },
+                { gameId: 'b', gameName: 'Поиск в строке', maxPoints: 100, hasError: true },
+                { gameId: 'c', gameName: 'Динамическое программирование', points: 90, maxPoints: 100, rank: 3, hasError: false },
+                { gameId: 'd', gameName: 'Графы и кратчайшие пути', points: 100, maxPoints: 100, rank: 2, hasError: false }
+            ]
+        }
+    ];
 
-  useEffect(() => {
-    setMounted(true)
-    setEntries(initialEntries)
-    previousEntriesRef.current = initialEntries
-    setLoading(false)
+    const [sortField, setSortField] = useState<SortField>('overallRank');
+    const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
 
-    // Обновление каждые 10 секунд
-    const interval = setInterval(() => {
-      setIsUpdating(true)
-      
-      setEntries(prevEntries => {
-        const updatedEntries = prevEntries
-          .map((entry) => ({
-            ...entry,
-            score: entry.error ? 0 : entry.score + Math.floor(Math.random() * 30) - 15,
-          }))
-          .sort((a, b) => {
-            if (a.error && !b.error) return 1
-            if (!a.error && b.error) return -1
-            return b.score - a.score
-          })
-          .map((entry, index) => ({
-            ...entry,
-            position: index + 1,
-          }))
+    const handleSort = (field: SortField) => {
+        if (sortField === field) {
+            setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+        } else {
+            setSortField(field);
+            setSortDirection('asc');
+        }
+    };
 
-        previousEntriesRef.current = [...prevEntries]
-        return updatedEntries
-      })
+    const sortedData = useMemo(() => {
+        return [...mockData].sort((a, b) => {
+            let aValue: any;
+            let bValue: any;
 
-      // Сбрасываем флаг обновления через 1 секунду
-      setTimeout(() => setIsUpdating(false), 1000)
-    }, 10000)
+            if (sortField === 'teamName') {
+                aValue = a.teamName;
+                bValue = b.teamName;
+            } else if (sortField === 'totalPoints') {
+                aValue = a.totalPoints;
+                bValue = b.totalPoints;
+            } else if (sortField === 'overallRank') {
+                aValue = a.overallRank;
+                bValue = b.overallRank;
+            } else {
+                // Сортировка по игре
+                const aGame = a.gameResults.find(g => g.gameId === sortField);
+                const bGame = b.gameResults.find(g => g.gameId === sortField);
 
-    return () => clearInterval(interval)
-  }, [])
+                if (aGame?.hasError && bGame?.hasError) {
+                    aValue = bValue = 0; // Оба с ошибкой - равны
+                } else if (aGame?.hasError) {
+                    aValue = -1; // Ошибка идет в конец
+                } else if (bGame?.hasError) {
+                    bValue = -1; // Ошибка идет в конец
+                } else {
+                    aValue = aGame?.points || 0;
+                    bValue = bGame?.points || 0;
+                }
+            }
 
-  const getPositionIcon = (position: number) => {
-    switch (position) {
-      case 1:
-        return <Trophy className="w-6 h-6 text-yellow-500" />
-      case 2:
-        return <Medal className="w-6 h-6 text-slate-400" />
-      case 3:
-        return <Award className="w-6 h-6 text-amber-600" />
-      default:
-        return (
-          <div className="w-6 h-6 flex items-center justify-center text-lg font-bold text-slate-600">{position}</div>
-        )
-    }
-  }
+            if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+            if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+            return 0;
+        });
+    }, [mockData, sortField, sortDirection]);
 
-  const getRowStyle = (entry: LeaderboardEntry) => {
-    const previousEntry = previousEntriesRef.current.find(p => p.id === entry.id)
-    const hasPositionChanged = previousEntry && previousEntry.position !== entry.position
-    
-    return {
-      transform: hasPositionChanged ? 'scale(1.02)' : 'scale(1)',
-      transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
-      zIndex: hasPositionChanged ? 10 : 1,
-    }
-  }
+    const getSortIcon = (field: SortField) => {
+        if (sortField !== field) return null;
+        return sortDirection === 'asc' ?
+            <ChevronUp className="w-4 h-4 ml-1" /> :
+            <ChevronDown className="w-4 h-4 ml-1" />;
+    };
 
-  if (loading) {
-    return (
-      <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-            <Crown className="w-6 h-6 text-yellow-500" />
-            Таблица лидеров
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="flex items-center gap-4 p-4 rounded-lg border bg-slate-50 animate-pulse">
-                <div className="w-6 h-6 bg-slate-200 rounded"></div>
-                <div className="flex-1">
-                  <div className="h-6 bg-slate-200 rounded mb-1"></div>
-                </div>
-                <div className="w-16 h-6 bg-slate-200 rounded"></div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    )
-  }
+    const getRankIcon = (rank: number) => {
+        if (rank === 1) return <Trophy className="w-4 h-4 text-yellow-500" />;
+        if (rank === 2) return <Medal className="w-4 h-4 text-gray-400" />;
+        if (rank === 3) return <Award className="w-4 h-4 text-amber-600" />;
+        return null;
+    };
 
-  console.log('GameLeaderboard render:', { entries: entries.length, loading, mounted, gameId })
-
-  return (
-    <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-          <Crown className="w-6 h-6 text-yellow-500" />
-          Таблица лидеров
-          {isUpdating && (
-            <div className="ml-2 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-          )}
-        </CardTitle>
-      </CardHeader>
-
-      <CardContent>
-        <div className="space-y-2 relative">
-          {entries.map((entry) => {
-            const previousEntry = previousEntriesRef.current.find(p => p.id === entry.id)
-            const hasPositionChanged = previousEntry && previousEntry.position !== entry.position
-            const positionChange = previousEntry ? entry.position - previousEntry.position : 0
-            
+    const formatGameResult = (result: GameResult) => {
+        if (result.hasError) {
             return (
-              <div
-                key={entry.id}
-                style={getRowStyle(entry)}
-                className={cn(
-                  "leaderboard-row flex items-center gap-4 p-4 rounded-lg border relative",
-                  entry.position <= 3 && !entry.error
-                    ? "bg-gradient-to-r from-yellow-50 to-amber-50 border-yellow-200"
-                    : entry.error
-                      ? "bg-red-50 border-red-200"
-                      : "bg-slate-50 border-slate-200 hover:bg-slate-100",
-                  hasPositionChanged && "shadow-lg",
-                  positionChange > 0 && "border-green-300 bg-green-50/50",
-                  positionChange < 0 && "border-red-300 bg-red-50/50"
-                )}
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  {getPositionIcon(entry.position)}
-                  {hasPositionChanged && (
-                    <div className={cn(
-                      "text-xs font-bold px-2 py-1 rounded-full",
-                      positionChange > 0 
-                        ? "bg-green-100 text-green-700" 
-                        : "bg-red-100 text-red-700"
-                    )}>
-                      {positionChange > 0 ? `+${positionChange}` : positionChange}
-                    </div>
-                  )}
+                <div className="text-center">
+                    <span className="text-red-600 font-medium">ERROR</span>
+                    <span className="text-slate-400 ml-1">(-)</span>
                 </div>
+            );
+        }
 
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-slate-800 text-lg truncate">{entry.teamName}</h3>
-                  {hasPositionChanged && (
-                    <p className="text-sm text-slate-500">
-                      {positionChange > 0 ? 'Поднялся' : 'Опустился'} с {previousEntry?.position} места
-                    </p>
-                  )}
-                </div>
+        return (
+            <div className="text-center">
+                <span className="font-medium">{result.points || 0}</span>
+                <span className="text-slate-500 ml-1">({result.rank || '-'})</span>
+            </div>
+        );
+    };
 
-                <div className="text-right flex-shrink-0">
-                  {entry.error ? (
-                    <div className="flex items-center gap-2 text-red-600">
-                      <AlertCircle className="w-5 h-5" />
-                      <Badge variant="destructive" className="whitespace-nowrap">
-                        Ошибка
-                      </Badge>
-                    </div>
-                  ) : (
-                    <div className="text-2xl font-bold text-slate-800">
-                      {entry.score}
-                      {hasPositionChanged && (
-                        <div className={cn(
-                          "text-xs font-normal mt-1",
-                          positionChange > 0 ? "text-green-600" : "text-red-600"
-                        )}>
-                          {previousEntry && entry.score > previousEntry.score ? '+' : ''}
-                          {previousEntry ? entry.score - previousEntry.score : 0}
-                        </div>
-                      )}
-                    </div>
-                  )}
+    return (
+        <Card className="shadow-lg">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                    <Trophy className="w-5 h-5 text-yellow-500" />
+                    Таблица лидеров
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <div className="overflow-x-auto">
+                    <table className="w-full">
+                        <thead>
+                        <tr className="border-b border-slate-200">
+                            <th className="text-left py-3 px-4 font-semibold text-slate-700">
+                                <Button
+                                    variant="ghost"
+                                    className="p-0 h-auto font-semibold hover:bg-transparent"
+                                    onClick={() => handleSort('teamName')}
+                                >
+                                    Команда
+                                    {getSortIcon('teamName')}
+                                </Button>
+                            </th>
+
+                            {mockGames.map((game) => (
+                                <th key={game.id} className="text-center py-3 px-4 font-semibold text-slate-700 min-w-[120px]">
+                                    <Button
+                                        variant="ghost"
+                                        className="p-0 h-auto font-semibold hover:bg-transparent text-center"
+                                        onClick={() => handleSort(game.id)}
+                                    >
+                                        <div className="text-center">
+                                            <div>{game.name}</div>
+                                            <div className="text-xs text-slate-500 font-normal">({game.maxPoints} макс.)</div>
+                                        </div>
+                                        {getSortIcon(game.id)}
+                                    </Button>
+                                </th>
+                            ))}
+
+                            <th className="text-center py-3 px-4 font-semibold text-slate-700">
+                                <Button
+                                    variant="ghost"
+                                    className="p-0 h-auto font-semibold hover:bg-transparent"
+                                    onClick={() => handleSort('overallRank')}
+                                >
+                                    Общая позиция
+                                    {getSortIcon('overallRank')}
+                                </Button>
+                            </th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        {sortedData.map((team, index) => (
+                            <tr
+                                key={team.teamId}
+                                className={`border-b border-slate-100 hover:bg-slate-50 transition-colors ${
+                                    index < 3 ? 'bg-gradient-to-r from-blue-50/30 to-transparent' : ''
+                                }`}
+                            >
+                                <td className="py-4 px-4">
+                                    <div className="flex items-center gap-2">
+                                        {getRankIcon(team.overallRank)}
+                                        <span className="font-medium text-slate-800">{team.teamName}</span>
+                                        {team.overallRank <= 3 && (
+                                            <Badge
+                                                variant="outline"
+                                                className={
+                                                    team.overallRank === 1
+                                                        ? "border-yellow-300 bg-yellow-50 text-yellow-700"
+                                                        : team.overallRank === 2
+                                                            ? "border-gray-300 bg-gray-50 text-gray-700"
+                                                            : "border-amber-300 bg-amber-50 text-amber-700"
+                                                }
+                                            >
+                                                TOP {team.overallRank}
+                                            </Badge>
+                                        )}
+                                    </div>
+                                </td>
+
+                                {mockGames.map((game) => {
+                                    const result = team.gameResults.find(r => r.gameId === game.id);
+                                    return (
+                                        <td key={game.id} className="py-4 px-4">
+                                            {result ? formatGameResult(result) : (
+                                                <div className="text-center text-slate-400">-</div>
+                                            )}
+                                        </td>
+                                    );
+                                })}
+
+                                <td className="py-4 px-4 text-center">
+                                    <div className="flex items-center justify-center gap-2">
+                                        {getRankIcon(team.overallRank)}
+                                        <span className="font-bold text-lg">#{team.overallRank}</span>
+                                    </div>
+                                    <div className="text-sm text-slate-500">{team.totalPoints} очков</div>
+                                </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
                 </div>
-              </div>
-            )
-          })}
-        </div>
-      </CardContent>
-    </Card>
-  )
+            </CardContent>
+        </Card>
+    );
 }
