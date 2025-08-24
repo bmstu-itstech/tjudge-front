@@ -8,7 +8,6 @@ interface GameResult {
     gameId: string;
     gameName: string;
     points?: number;
-    maxPoints: number;
     rank?: number;
     hasError: boolean;
 }
@@ -32,8 +31,8 @@ export function GameLeaderboard({ gameId }: GameLeaderboardProps) {
     const mockGames = [
         { id: 'a', name: 'Сумма массива', maxPoints: 100 },
         { id: 'b', name: 'Поиск в строке', maxPoints: 100 },
-        { id: 'c', name: 'Динамическое программирование', maxPoints: 100 },
-        { id: 'd', name: 'Графы и кратчайшие пути', maxPoints: 100 }
+        { id: 'c', name: 'Динамическое программирование', maxPoints: 200 },
+        { id: 'd', name: 'Графы и кратчайшие пути', maxPoints: 300 }
     ];
 
     const mockData: TeamLeaderboard[] = [
@@ -43,10 +42,10 @@ export function GameLeaderboard({ gameId }: GameLeaderboardProps) {
             totalPoints: 340,
             overallRank: 1,
             gameResults: [
-                { gameId: 'a', gameName: 'Сумма массива', points: 100, maxPoints: 100, rank: 1, hasError: false },
-                { gameId: 'b', gameName: 'Поиск в строке', points: 85, maxPoints: 100, rank: 3, hasError: false },
-                { gameId: 'c', gameName: 'Динамическое программирование', points: 95, maxPoints: 100, rank: 2, hasError: false },
-                { gameId: 'd', gameName: 'Графы и кратчайшие пути', points: 60, maxPoints: 100, rank: 8, hasError: false }
+                { gameId: 'a', gameName: 'Сумма массива', points: 100,  rank: 1, hasError: false },
+                { gameId: 'b', gameName: 'Поиск в строке', points: 85,  rank: 3, hasError: false },
+                { gameId: 'c', gameName: 'Динамическое программирование', points: 95,  rank: 2, hasError: false },
+                { gameId: 'd', gameName: 'Графы и кратчайшие пути', points: 60,  rank: 8, hasError: false }
             ]
         },
         {
@@ -55,10 +54,10 @@ export function GameLeaderboard({ gameId }: GameLeaderboardProps) {
             totalPoints: 330,
             overallRank: 2,
             gameResults: [
-                { gameId: 'a', gameName: 'Сумма массива', points: 95, maxPoints: 100, rank: 2, hasError: false },
-                { gameId: 'b', gameName: 'Поиск в строке', points: 100, maxPoints: 100, rank: 1, hasError: false },
-                { gameId: 'c', gameName: 'Динамическое программирование', points: 75, maxPoints: 100, rank: 5, hasError: false },
-                { gameId: 'd', gameName: 'Графы и кратчайшие пути', points: 60, maxPoints: 100, rank: 7, hasError: false }
+                { gameId: 'a', gameName: 'Сумма массива', points: 95,  rank: 2, hasError: false },
+                { gameId: 'b', gameName: 'Поиск в строке', points: 100,  rank: 1, hasError: false },
+                { gameId: 'c', gameName: 'Динамическое программирование', points: 75,  rank: 5, hasError: false },
+                { gameId: 'd', gameName: 'Графы и кратчайшие пути', points: 60,  rank: 7, hasError: false }
             ]
         },
         {
@@ -67,10 +66,10 @@ export function GameLeaderboard({ gameId }: GameLeaderboardProps) {
             totalPoints: 315,
             overallRank: 3,
             gameResults: [
-                { gameId: 'a', gameName: 'Сумма массива', points: 90, maxPoints: 100, rank: 3, hasError: false },
-                { gameId: 'b', gameName: 'Поиск в строке', points: 90, maxPoints: 100, rank: 2, hasError: false },
-                { gameId: 'c', gameName: 'Динамическое программирование', maxPoints: 100, hasError: true },
-                { gameId: 'd', gameName: 'Графы и кратчайшие пути', points: 135, maxPoints: 100, rank: 1, hasError: false }
+                { gameId: 'a', gameName: 'Сумма массива', points: 90,  rank: 3, hasError: false },
+                { gameId: 'b', gameName: 'Поиск в строке', points: 90,  rank: 2, hasError: false },
+                { gameId: 'c', gameName: 'Динамическое программирование',  hasError: true },
+                { gameId: 'd', gameName: 'Графы и кратчайшие пути', points: 35,  rank: 11, hasError: false }
             ]
         },
         {
@@ -79,10 +78,10 @@ export function GameLeaderboard({ gameId }: GameLeaderboardProps) {
             totalPoints: 280,
             overallRank: 4,
             gameResults: [
-                { gameId: 'a', gameName: 'Сумма массива', points: 80, maxPoints: 100, rank: 5, hasError: false },
-                { gameId: 'b', gameName: 'Поиск в строке', points: 70, maxPoints: 100, rank: 6, hasError: false },
-                { gameId: 'c', gameName: 'Динамическое программирование', points: 100, maxPoints: 100, rank: 1, hasError: false },
-                { gameId: 'd', gameName: 'Графы и кратчайшие пути', points: 30, maxPoints: 100, rank: 12, hasError: false }
+                { gameId: 'a', gameName: 'Сумма массива', points: 80,  rank: 5, hasError: false },
+                { gameId: 'b', gameName: 'Поиск в строке', points: 70,  rank: 6, hasError: false },
+                { gameId: 'c', gameName: 'Динамическое программирование', points: 100,  rank: 1, hasError: false },
+                { gameId: 'd', gameName: 'Графы и кратчайшие пути', points: 30,  rank: 12, hasError: false }
             ]
         },
         {
@@ -91,10 +90,10 @@ export function GameLeaderboard({ gameId }: GameLeaderboardProps) {
             totalPoints: 275,
             overallRank: 5,
             gameResults: [
-                { gameId: 'a', gameName: 'Сумма массива', points: 85, maxPoints: 100, rank: 4, hasError: false },
-                { gameId: 'b', gameName: 'Поиск в строке', maxPoints: 100, hasError: true },
-                { gameId: 'c', gameName: 'Динамическое программирование', points: 90, maxPoints: 100, rank: 3, hasError: false },
-                { gameId: 'd', gameName: 'Графы и кратчайшие пути', points: 100, maxPoints: 100, rank: 2, hasError: false }
+                { gameId: 'a', gameName: 'Сумма массива', points: 85,  rank: 4, hasError: false },
+                { gameId: 'b', gameName: 'Поиск в строке',  hasError: true },
+                { gameId: 'c', gameName: 'Динамическое программирование', points: 90,  rank: 3, hasError: false },
+                { gameId: 'd', gameName: 'Графы и кратчайшие пути', points: 100,  rank: 1, hasError: false }
             ]
         }
     ];
